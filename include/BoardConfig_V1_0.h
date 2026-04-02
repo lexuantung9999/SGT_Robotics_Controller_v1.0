@@ -32,7 +32,7 @@
 #define M6_PIN_A                   14
 #define M6_PIN_B                   21
 
-#define MOTOR_COUNT 6
+#define MOTOR_COUNT                 6
 #define MOTOR_PWM_FREQ             5000
 
 static const uint8_t MOTOR_PIN_A[MOTOR_COUNT] = {
