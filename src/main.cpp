@@ -9,6 +9,7 @@ MotorControl motor;
 ServoControl servo;
 
 TwoWire I2C_SERVO = TwoWire(1);
+HardwareSerial RS485Serial(1);
 
 void scanI2C() {
     Serial.println("Scanning I2C bus...");
@@ -36,6 +37,14 @@ void scanI2C() {
 
 void setup() {
     Serial.begin(115200);
+    
+    // UART1 on custom pins
+    RS485Serial.begin(
+        115200,          // baudrate
+        SERIAL_8N1,      // data format
+        RS485_RXD,       // RX pin
+        RS485_TXD        // TX pin
+    );
 
     // Motor init
     motor.config(MOTOR_PIN_A, MOTOR_PIN_B, MOTOR_COUNT);
@@ -44,11 +53,10 @@ void setup() {
     // Initialize default I2C bus on custom pins
     Wire.begin(SERVO_I2C_SDA, SERVO_I2C_SCL);
 
-    delay(100);
+    //delay(100);
 
-    scanI2C();
+    //scanI2C();
 
-    
     servo.setChannelCount(SERVO_CHANNEL_MAX);
     servo.begin();
 }
@@ -59,22 +67,26 @@ void loop() {
     // Servo: 0° -> 30°
     servo.writeAngle(0, 0);
     servo.writeAngle(1, 0);
+    RS485Serial.println("`Running forward at 50% speed, servos at 0°");
     delay(3000);
 
     motor.stopAll();
     servo.writeAngle(0, 90);
     servo.writeAngle(1, 90);
+    RS485Serial.println("`Motors stopped, servos at 90°");
     delay(3000);
 
     // Return to 0°
     motor.runAll(-50);
     servo.writeAngle(0, 0);
     servo.writeAngle(1, 0);
+    RS485Serial.println("`Running backward at 50% speed, servos at 0°");
     delay(3000);
 
     // Move back to 30°
     motor.stopAll();
     servo.writeAngle(0, 90);
     servo.writeAngle(1, 90);
+    RS485Serial.println("`Motors stopped, servos at 90°");
     delay(3000);
 }
