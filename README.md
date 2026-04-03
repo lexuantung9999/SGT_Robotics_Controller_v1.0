@@ -1,10 +1,10 @@
 # ControlBoard v1.0
 
-![ControlBoard v1.0 Top View](images/SGT_Robot_Control_Board_v1.0_top.png)
+![ControlBoard v1.0 Top View](images/SGT_Robot_Control_Board_mini_top.png)
 
 *Figure 1. ControlBoard v1.0 Top View*
 
-![ControlBoard v1.0 Bottom View](images/SGT_Robot_Control_Board_v1.0_bottom.png)
+![ControlBoard v1.0 Bottom View](images/SGT_Robot_Control_Board_mini_bottom.png)
 
 *Figure 2. ControlBoard v1.0 Bottom View*
 
@@ -12,12 +12,30 @@ ControlBoard v1.0 is a compact and powerful embedded control board designed for 
 
 The board is built around the **ESP32-S3** microcontroller and integrates multiple motor drivers, servo expansion, communication interfaces, and onboard sensing capabilities.
 
+# Mini Controller Board v1.0
+
+<div align="center">
+  <img src="images/mini_controller_top.png" width="700">
+  <br>
+  <em>Figure 1. Mini Controller Board v1.0 Top View</em>
+</div>
+
+<div align="center">
+  <img src="images/mini_controller_bottom.png" width="700">
+  <br>
+  <em>Figure 2. Mini Controller Board v1.0 Bottom View</em>
+</div>
+
+Mini Controller Board v1.0 is a compact embedded control board designed for robotics applications such as mobile robots, line-following robots, mini soccer robots, servo control systems, and sensor integration platforms.
+
+The board is built around the **ESP32-S3** microcontroller and integrates DC motor drivers, onboard IMU, servo ports, encoder interfaces, and general-purpose I/O expansion.
+
 ---
 
 # Overview
 
 - **Microcontroller:** ESP32-S3
-- **Board Size:** 100 mm x 100 mm
+- **Board Size:** 75 mm x 65 mm
 - **Input Voltage:** 6VDC ~ 17VDC  
   Recommended: **12VDC (3S Li-ion / LiPo)**
 - **Power Protection:**
@@ -28,79 +46,88 @@ The board is built around the **ESP32-S3** microcontroller and integrates multip
 
 # Power Output
 
-| Output Rail       | Max Current |
-|------------------|------------:|
-| 5V               | 5A          |
-| 3.3V             | 1A          |
-| Servo Power 6V #1 | 5A         |
-| Servo Power 6V #2 | 5A         |
+| Output Rail | Max Current |
+|---|---:|
+| 5V Servo Power | 5A |
+| 3.3V Logic Power | 1A |
 
 ---
 
 # Communication Interfaces
 
-| Interface  | Description                 | Pinout        |
-|-----------|-----------------------------|---------------|
-| UART to USB | Programming / Debugging    | CP2102 / CH340x |
-| USB CDC     | Programming / Serial Monitor | Native USB |
-| RS485       | Differential communication | TX: IO37, RX: IO38 |
-| I2C Bus 1   | IMU communication          | SDA: IO35, SCL: IO36 |
-| I2C Bus 2   | PCA9685 servo control      | SDA: IO1, SCL: IO2 |
+| Interface | Description | Notes |
+|---|---|---|
+| UART to USB | Programming / Debugging | CH340x |
+| USB CDC | Programming / Serial Monitor | Native USB |
+| I2C | External sensor communication | 2x PH2.0 Port |
+| IMU I2C | Onboard IMU | SDA: IO35, SCL: IO36 |
+
+---
+
+# Onboard Sensor
+
+| Sensor | Interface | Pins |
+|---|---|---|
+| ICM-42605 6-axis IMU | I2C | SDA: IO35, SCL: IO36 |
 
 ---
 
 # DC Motor Control
 
+**Motor Driver:** AT8236  
+- Continuous current: **3A**
+- Peak current: **6A**
+
 | Motor Port | Pin A | Pin B |
-|------------|-------|-------|
-| M1         | IO17  | IO18  |
-| M2         | IO15  | IO16  |
-| M3         | IO8   | IO9   |
-| M4         | IO10  | IO11  |
-| M5         | IO12  | IO13  |
-| M6         | IO14  | IO21  |
-
----
-
-# Servo Control
-
-## PCA9685 I2C Pins
-
-| Function | Pin |
-|----------|-----|
-| SDA      | IO1  |
-| SCL      | IO2  |
-
-## Servo Channels
-
-- CH0 → CH7 : onboard servo ports  
-- CH8 → CH15 : expansion PWM ports
+|---|---|---|
+| M1 | IO15 | IO16 |
+| M2 | IO17 | IO18 |
+| M3 | IO8  | IO9  |
+| M4 | IO10 | IO11 |
 
 ---
 
 # Encoder Ports
 
 | Encoder Port | Channel A | Channel B |
-|-------------|-----------|-----------|
-| Encoder 1   | IO4       | IO5       |
-| Encoder 2   | IO6       | IO7       |
+|---|---|---|
+| Encoder 1 | IO7 | IO6 |
+| Encoder 2 | IO13 | IO12 |
 
 ---
 
-# General Purpose I/O Ports
+# Servo Control
 
-| Port        | Pin  |
-|------------|------|
-| GPIO Port 1 | IO39 |
-| GPIO Port 2 | IO40 |
-| GPIO Port 3 | IO47 |
-| GPIO Port 4 | IO48 |
+| Servo Port | GPIO |
+|---|---|
+| Servo 1 | IO37 |
+| Servo 2 | IO38 |
+| Servo 3 | IO39 |
+| Servo 4 | IO40 |
+| Servo 5 | IO41 |
+| Servo 6 | IO42 |
 
 ---
 
-# Additional Features
+# General Purpose Input Ports
 
-- 1x RGB LED **SK6812**
+| Port | Pin |
+|---|---|
+| Input 1 | IO14 |
+| Input 2 | IO21 |
+| Input 3 | IO47 |
+| Input 4 | IO48 |
+
+---
+
+# Buttons and Indicators
+
+| Function | Pin |
+|---|---|
+| Onboard LED | IO4 |
+| User Button / Boot | IO2 |
+
+Additional buttons:
 - 1x Reset button
 - 1x Boot button
 
@@ -109,17 +136,48 @@ The board is built around the **ESP32-S3** microcontroller and integrates multip
 # Firmware Pin Defines
 
 ```cpp
-#define RS485_TXD      37
-#define RS485_RXD      38
+// IMU
+#define IMU_I2C_SDA      35
+#define IMU_I2C_SCL      36
 
-#define IMU_I2C_SDA    35
-#define IMU_I2C_SCL    36
+// DC Motors
+#define MOTOR_M1_A       15
+#define MOTOR_M1_B       16
 
-#define SERVO_I2C_SDA  1
-#define SERVO_I2C_SCL  2
+#define MOTOR_M2_A       17
+#define MOTOR_M2_B       18
+
+#define MOTOR_M3_A       8
+#define MOTOR_M3_B       9
+
+#define MOTOR_M4_A       10
+#define MOTOR_M4_B       11
+
+// Servo Ports
+#define SERVO_1          37
+#define SERVO_2          38
+#define SERVO_3          39
+#define SERVO_4          40
+#define SERVO_5          41
+#define SERVO_6          42
+
+// Encoders
+#define ENCODER1_A       7
+#define ENCODER1_B       6
+
+#define ENCODER2_A       13
+#define ENCODER2_B       12
+
+// General Inputs
+#define INPUT_1          14
+#define INPUT_2          21
+#define INPUT_3          47
+#define INPUT_4          48
+
+// Onboard Devices
+#define LED_ONBOARD      4
+#define USER_BUTTON      2
 ```
-
----
 
 # Getting Started
 
