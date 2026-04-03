@@ -1,92 +1,62 @@
 #include <Arduino.h>
-#include <Wire.h>
 
-#include "BoardConfig_V1_0.h"
+#include "BoardConfig_mini.h"
 #include "MotorControl.h"
 #include "ServoControl.h"
 
 MotorControl motor;
 ServoControl servo;
 
-TwoWire I2C_SERVO = TwoWire(1);
-HardwareSerial RS485Serial(1);
-
-void scanI2C() {
-    Serial.println("Scanning I2C bus...");
-
-    uint8_t found = 0;
-
-    for (uint8_t addr = 1; addr < 127; addr++) {
-        Wire.beginTransmission(addr);
-
-        if (Wire.endTransmission() == 0) {
-            Serial.print("Found device at 0x");
-            if (addr < 16) Serial.print("0");
-            Serial.println(addr, HEX);
-
-            found++;
-        }
-    }
-
-    if (found == 0) {
-        Serial.println("No I2C device found.");
-    } else {
-        Serial.println("Scan complete.");
-    }
-}
-
-void setup() {
+void setup()
+{
     Serial.begin(115200);
-    
-    // UART1 on custom pins
-    RS485Serial.begin(
-        115200,          // baudrate
-        SERIAL_8N1,      // data format
-        RS485_RXD,       // RX pin
-        RS485_TXD        // TX pin
-    );
 
     // Motor init
     motor.config(MOTOR_PIN_A, MOTOR_PIN_B, MOTOR_COUNT);
     motor.begin(MOTOR_PWM_FREQ);
 
-    // Initialize default I2C bus on custom pins
-    Wire.begin(SERVO_I2C_SDA, SERVO_I2C_SCL);
-
-    //delay(100);
-
-    //scanI2C();
-
-    servo.setChannelCount(SERVO_CHANNEL_MAX);
+    // Servo init
+    servo.setChannelCount(6);
     servo.begin();
+
+    Serial.println("Mini Controller Board initialized.");
 }
 
-void loop() {
-    // Run all motors forward
+void loop()
+{
+    // Forward
     motor.runAll(50);
-    // Servo: 0° -> 30°
+
     servo.writeAngle(0, 0);
     servo.writeAngle(1, 0);
-    RS485Serial.println("`Running forward at 50% speed, servos at 0°");
+
+    Serial.println("Running forward at 50%, servos at 0 deg");
     delay(3000);
 
+    // Stop + 90 degree
     motor.stopAll();
+
     servo.writeAngle(0, 90);
     servo.writeAngle(1, 90);
-    RS485Serial.println("`Motors stopped, servos at 90°");
+
+    Serial.println("Motors stopped, servos at 90 deg");
     delay(3000);
 
-    // Return to 0°
+    // Backward
     motor.runAll(-50);
+
     servo.writeAngle(0, 0);
     servo.writeAngle(1, 0);
-    RS485Serial.println("`Running backward at 50% speed, servos at 0°");
+
+    Serial.println("Running backward at 50%, servos at 0 deg");
     delay(3000);
 
-    // Move back to 30°
+    // Stop
     motor.stopAll();
+
     servo.writeAngle(0, 90);
     servo.writeAngle(1, 90);
-    RS485Serial.println("`Motors stopped, servos at 90°");
+
+    Serial.println("Motors stopped, servos at 90 deg");
     delay(3000);
 }
