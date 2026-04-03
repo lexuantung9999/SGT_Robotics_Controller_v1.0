@@ -12,7 +12,7 @@ ControlBoard v1.0 is a compact and powerful embedded control board designed for 
 
 The board is built around the **ESP32-S3** microcontroller and integrates multiple motor drivers, servo expansion, communication interfaces, and onboard sensing capabilities.
 
-# Mini Controller Board v1.0
+<!-- # Mini Controller Board v1.0
 
 <div align="center">
   <img src="images/mini_controller_top.png" width="700">
@@ -24,7 +24,7 @@ The board is built around the **ESP32-S3** microcontroller and integrates multip
   <img src="images/mini_controller_bottom.png" width="700">
   <br>
   <em>Figure 2. Mini Controller Board v1.0 Bottom View</em>
-</div>
+</div> -->
 
 Mini Controller Board v1.0 is a compact embedded control board designed for robotics applications such as mobile robots, line-following robots, mini soccer robots, servo control systems, and sensor integration platforms.
 
