@@ -7,6 +7,10 @@ MotorControl::MotorControl() {
     pwmFreq = 5000;
 }
 
+/* 
+    pinsA and pinsB should be arrays of size 'count', GPIO pin numbers for each motor's A and B channels respectively 
+    count: maximum 6 motors (2 MCPWM units with 3 timers each)
+*/ 
 void MotorControl::config(const uint8_t* pinsA,
                           const uint8_t* pinsB,
                           uint8_t count) {
